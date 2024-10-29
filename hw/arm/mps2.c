@@ -38,6 +38,7 @@
 #include "hw/qdev-properties.h"
 #include "hw/misc/unimp.h"
 #include "hw/char/cmsdk-apb-uart.h"
+#include "hw/char/cmsdk-apb-uart-phown.h"
 #include "hw/timer/cmsdk-apb-timer.h"
 #include "hw/timer/cmsdk-apb-dualtimer.h"
 #include "hw/misc/mps2-scc.h"
@@ -294,7 +295,12 @@ static void mps2_common_init(MachineState *machine)
                 rxovrint = qdev_get_gpio_in(orgate_dev, i * 2 + 1);
             }
 
-            dev = qdev_new(TYPE_CMSDK_APB_UART);
+            if (i == 2) {
+                dev = qdev_new(TYPE_CMSDK_APB_UART_PHOWN);
+            } else {
+                dev = qdev_new(TYPE_CMSDK_APB_UART);
+            }
+
             s = SYS_BUS_DEVICE(dev);
             qdev_prop_set_chr(dev, "chardev", serial_hd(i));
             qdev_prop_set_uint32(dev, "pclk-frq", SYSCLK_FRQ);
